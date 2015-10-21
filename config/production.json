@@ -3,6 +3,7 @@
     "httpport": 80,
     "httpsport": 443
   },
+  "url":"prod.cachefi.com",
   "AWS_S3": {},
   "mailer_options": {},
   "twilio": {},

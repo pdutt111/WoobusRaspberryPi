@@ -1,16 +1,19 @@
 /**
  * Created by pariskshitdutt on 21/09/15.
  */
-var sensorLib = require('node-dht-sensor');
+//var sensorLib = require('node-dht-sensor');
+var q= require('q');
 var os=require('os');
 var util = require('util');
+var speedtest=require('speedtest-net');
 
 var func={
     getDHTReading:function(){
-        sensorLib.initialize(22, 4);
-        var readout = sensorLib.read();
-        console.log('Temperature: ' + readout.temperature.toFixed(2) + 'C, ' +
-            'humidity: ' + readout.humidity.toFixed(2) + '%');
+        var readout={temperature:0,humidity:0};
+        //sensorLib.initialize(22, 4);
+        //readout = sensorLib.read();
+        //console.log('Temperature: ' + readout.temperature.toFixed(2) + 'C, ' +
+        //    'humidity: ' + readout.humidity.toFixed(2) + '%');
         return readout;
     },
     getCoordinates:function(){
@@ -19,10 +22,6 @@ var func={
             lon:0
         }
         return coords;
-    },
-
-    getIP:function(){
-        return "192.168.0.1";
     },
     getUsersConnected:function(){
         return 0;
@@ -55,6 +54,16 @@ var func={
         return os.totalmem();
     },
     getRamUsedProcess:function(){
-        return util.inspect(process.memoryUsage()).heapTotal;
+        var ramUsage=process.memoryUsage();
+        return ramUsage.heapTotal;
+    },
+    getNetSpeed:function(){
+        var def= q.defer();
+        speedtest().on('data',function(data){
+            def.resolve(data.speeds);
+        });
+        def.resolve({download:0,upload:0});
+        return def.promise;
     }
-}
+};
+module.exports=func;

@@ -15,10 +15,14 @@ var reviewTable;
 var details=function(req,res,next){
     var def= q.defer();
     if(req.originalUrl.indexOf("/info")>-1) {
-        userTable.findOne({_id: req.user._id}, "name email password phonenumber is_operator", function (err, user) {
-            if (!err&&user) {
+        userTable.findOne({_id: req.user._id}, function (err, user) {
+            if(!user){
+
+            }
+            if (!err) {
                 def.resolve(user)
             }else{
+                console.log(err);
                 def.reject({status:401,message:config.get('error.unauthorized')});
             }
         });

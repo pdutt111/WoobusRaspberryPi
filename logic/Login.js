@@ -17,64 +17,105 @@ var bcrypt = require('bcrypt');
 
 var userTable;
 var pinTable;
-    userTable=db.getuserdef;
-    pinTable=db.getpindef;
+userTable=db.getuserdef;
+pinTable=db.getpindef;
 
 var users={
-    //pinLogic:function(req,res){
-    //    var def= q.defer();
-    //    var pin=Math.floor(Math.random()*90000) + 10000;
-    //    pinTable.update({phonenumber:req.body.phonenumber},{phonenumber:req.body.phonenumber,pin:pin,used:false},
-    //        {upsert:true}).exec()
-    //        .then(function(info){
-    //            def.resolve(pin);
-    //        }).
-    //        then(null,function(err){
-    //            def.reject({status:500,message:err})
-    //        })
-    //    return def.promise;
-    //},
+    pinLogic:function(req,res){
+        var def= q.defer();
+        var pin=Math.floor(Math.random()*90000) + 10000;
+        pinTable.update({phonenumber:req.body.phonenumber},{phonenumber:req.body.phonenumber,pin:pin,used:false},
+            {upsert:true},function(err,info){
+                if(!err) {
+                    def.resolve(pin);
+                }else{
+                    def.reject({status: 500, message: config.get('error.dberror')});
+                }
+            });
+        return def.promise;
+    },
     userCreate:function(req,res){
-            var def= q.defer();
-            bcrypt.genSalt(10, function(err, salt) {
-                bcrypt.hash(req.body.password, salt, function(err, hash) {
-                    // Store hash in your password DB.
-                    req.body.password=hash;
-                    var user = new userTable(req.body);
-                    user.save(function(err,user,info){
-                        if(!err){
-                            def.resolve(user);
-                        }else{
-                            if(err.code==11000) {
-                                    def.reject({status: 401, message: config.get('error.unauthorized')});
-                            }else{
-                                def.reject({status: 500, message: config.get('error.dberror')});
-                            }
-                        }
-                    });
+        var def= q.defer();
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(randomString(5,'aA#'), salt, function(err, hash) {
+                // Store hash in your password DB.
+                req.body.password=hash;
+                req.body.is_operator=false;
+                req.body.is_operator=false;
+                req.body.is_random_password=true;
+                req.body.is_verified=false;
+
+                var user = new userTable(req.body);
+                user.save(function(err,user,info){
+                    log.info(err,user);
+                    if(!err&&user){
+                        var tokendata={
+                            _id:user._id,
+                            phonenumber:user.phonenumber,
+                            is_verified:user.is_verified,
+                            is_operator:user.is_operator,
+                            is_admin:user.is_admin
+
+                        };
+                        def.resolve(tokendata);
+                    }else{
+                            userTable.findOne({phonenumber:req.body.phonenumber},function(err,user){
+                                if(!err&&user) {
+                                    log.info(err,user);
+                                    user.is_verified = false;
+                                    user.save(function (err, user, info) {
+                                        def.resolve(user);
+                                    })
+                                }else{
+                                    def.reject({status: 500, message: config.get('error.dberror')});
+                                }
+                            });
+                    }
                 });
             });
+        });
 
-            return def.promise;
-        },
+        return def.promise;
+    },
     signin:function(req,res){
         var def= q.defer();
-        userTable.findOne({email:req.body.email},"password email name").exec()
-            .then(function(user){
-                bcrypt.compare(req.body.password,user.password,function(err,res){
-                    if(err){
-                        def.reject({status: 500, message: config.get('error.dberror')});
-                        return;
-                    }
-                    if(res){
-                        def.resolve(user);
-                    }else{
-                        def.reject({status: 401, message: config.get('error.unauthorized')});
-                    }
-                });
-            })
-            .then(null,function(err){
-                def.reject({status: 500, message: config.get('error.dberror')});
+        def.reject({status: 500, message: config.get('error.dberror')});
+        return def.promise;
+    },
+    verifyPhonenumber:function(req,res){
+        var def=new q.defer();
+        pinTable.find({phonenumber:req.body.phonenumber},function(err,pin){
+            console.log(err,pin);
+                if(!err&&pin){
+                    userTable.findOne({phonenumber:req.body.phonenumber},function(err,user) {
+                        if(!err&&user) {
+                            pinTable.update({phonenumber:req.body.phonenumber},{$set:{used:true}}).exec()
+                                .then(function(info){
+                                    log.info(info);
+                                })
+                                .then(null,function(err){
+                                    log.warn(err)
+                                })
+                            user.is_verified=true;
+                            user.save(function(err,user,info){
+                                console.log(user);
+                                var tokendata={
+                                    _id:user._id,
+                                    phonenumber:user.phonenumber,
+                                    is_verified:user.is_verified,
+                                    is_operator:user.is_operator,
+                                    is_admin:user.is_admin
+
+                                };
+                                def.resolve(tokendata);
+                            });
+                        }else{
+                            def.reject({status: 404, message: config.get('error.notfound')});
+                        }
+                    });
+                }else{
+                    def.reject({status: 401, message: config.get('error.unauthorized')});
+                }
             });
         return def.promise;
     },
@@ -104,9 +145,33 @@ var users={
             secret:req.user._id,
             expires: expires
         };
+        if(!req.secret){
+            delete response.secret;
+        }
+
         def.resolve(response);
         return def.promise;
+    },
+    getstate:function(req,res){
+        var def= q.defer();
+        def.resolve(config.get('state'));
+        return def.promise;
+    },
+    updateUserProfile:function(req,res){
+        var def= q.defer();
+            def.reject({status: 500, message: config.get('error.dberror')});
+        return def.promise;
     }
-}
 
+};
+function randomString(length, chars) {
+    var mask = '';
+    if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
+    if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    if (chars.indexOf('#') > -1) mask += '0123456789';
+    if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+    var result = '';
+    for (var i = length; i > 0; --i) result += mask[Math.round(Math.random() * (mask.length - 1))];
+    return result;
+}
 module.exports=users;

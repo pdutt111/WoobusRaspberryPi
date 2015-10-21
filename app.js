@@ -1,3 +1,4 @@
+require('./jobs/status.js');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -10,6 +11,8 @@ var details=require('./authentication/detailsFetch');
 var log = require('tracer').colorConsole(config.get('log'));
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var content = require('./routes/routeDetailsCalls');
+var route = require('./routes/ContentCalls');
 
 var app = express();
 
@@ -28,11 +31,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * middleware to authenticate the jwt and routes
  */
+app.use(function (req, res, next) {
 
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', '*');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
 app.use(
     function(req,res,next){
       auth(req,res)
           .then(function(user){
+              console.log(user,req.user);
             req.user=user;
             next();
           })
@@ -43,8 +64,12 @@ app.use(
     function(req,res,next){
       details(req,res)
           .then(function(user){
-            req.user = user;
-            next();
+              if(user) {
+                  req.user = user;
+                  next();
+              }else{
+                  next();
+              }
           })
           .catch(function(err){
             res.status(err.status).json(err.message);
@@ -56,6 +81,8 @@ app.use(
  */
 app.use('/api/v1/', routes);
 app.use('/api/v1/users', users);
+app.use('/api/v1/content', content);
+app.use('/api/v1/route', route);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

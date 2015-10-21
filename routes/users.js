@@ -17,8 +17,8 @@ var usersLogic=require('../logic/Login');
 
 var userTable;
 var pinTable;
-  userTable=db.getuserdef;
-  pinTable=db.getpindef;
+userTable=db.getuserdef;
+pinTable=db.getpindef;
 //router.post('/pin',params({body:['phonenumber']}),function(req,res){
 //    usersLogic.pinLogic(req,res)
 //        .then(function(info){
@@ -30,15 +30,37 @@ var pinTable;
 //});
 /* GET users listing. */
 
-router.post('/create',params({body:['email','password','name','is_operator']},{message : config.get('error.badrequest')}),
+router.post('/create',params({body:['phonenumber']},{message : config.get('error.badrequest')}),
+    function(req,res,next){
+        usersLogic.pinLogic(req,res)
+            .then(function(response){
+                res.json({pin:response});
+            })
+            .catch(function(err){
+                res.status(err.status).json(err.message);
+            })
+    });
+router.post('/verifyPhonenumber',params({body:['phonenumber','pin']},{message : config.get('error.badrequest')}),
     function(req,res,next) {
-        usersLogic.userCreate(req,res)
-            .then(function(user){
-                req.user=user;
+        usersLogic.verifyPhonenumber(req,res)
+            .then(function(response){
+                req.user=response;
                 next();
             })
             .catch(function(err){
+                if(err.status==404){
+                        usersLogic.userCreate(req,res)
+                            .then(function(user){
+                                req.user=user;
+                                req.secret=true;
+                                next();
+                            })
+                            .catch(function(err){
+                                res.status(err.status).json(err.message);
+                            }).done();
+                }else{
                     res.status(err.status).json(err.message);
+                }
             }).done();
     },
     function(req, res, next) {
@@ -50,15 +72,26 @@ router.post('/create',params({body:['email','password','name','is_operator']},{m
                 res.status(err.status).json(err.message);
             }).done();
     });
-router.post('signin',params({body:['email','password']}),
+router.post('/protected/updateUserProfile',
+    function(req,res,next) {
+        usersLogic.updateUserProfile(req,res)
+            .then(function(response){
+                res.json(response);
+            })
+            .catch(function(err){
+                res.status(err.status).json(err.message);
+            }).done();
+    });
+router.post('/signin',params({body:['phonenumber','password']},{message : config.get('error.badrequest')}),
     function(req,res,next){
-    usersLogic.signin(req,res)
-        .then(function(user){
-            req.user=user;
-            next();
-        }).catch(function(err){
-            res.status(err.status).json(err.message);
-        }).done();
+        usersLogic.signin(req,res)
+            .then(function(user){
+                req.user=user;
+                req.secret=false;
+                next();
+            }).catch(function(err){
+                res.status(err.status).json(err.message);
+            }).done();
     },
     function(req,res,next){
         usersLogic.sendToken(req,res)
@@ -73,10 +106,11 @@ router.post('/protected/info/renew',params({body:['secret']},{message : config.g
     function(req,res,next){
         usersLogic.renewToken(req,res)
             .then(function(){
+                req.secret=false;
                 next();
             })
             .catch(function(err){
-                    res.status(err.status).json(err.message);
+                res.status(err.status).json(err.message);
             }).done();
     },
     function(req,res,next){
@@ -91,7 +125,19 @@ router.post('/protected/info/renew',params({body:['secret']},{message : config.g
     });
 
 router.get('/protected/info',params({headers:['authorization']},{message : config.get('error.badrequest')}),function(req,res,next){
+    req.user=req.user.toObject();
+    delete req.user.password;
+    delete req.user._id;
     res.json(req.user);
 });
-
+router.get('/protected/state',params({headers:['authorization']},{message : config.get('error.badrequest')}),
+    function(req,res,next){
+        usersLogic.getstate(req,res)
+            .then(function(state){
+                res.json(state);
+            })
+            .catch(function(err){
+                res.status(500).json(config.get('error.dberror'));
+            })
+    });
 module.exports = router;

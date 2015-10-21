@@ -3,6 +3,9 @@
     "httpport": 1337,
     "httpsport": 443
   },
+  "url":"development.cachefi.com",
+  "bus_id":"1",
+  "dblocation":"/db/dbfiles",
   "AWS_S3": {},
   "mailer_options": {},
   "twilio": {},
@@ -11,6 +14,14 @@
     "location": "localhost",
     "database":"woobus",
     "debug": false
+  },
+  "serverUrl":"http://dev.cachefi.com",
+  "state":{
+    "in_bus":true,
+    "bookings":true,
+    "entertainment":true,
+    "ebooks":true,
+    "apps":true
   },
   "mockgoose":true,
   "token":{
