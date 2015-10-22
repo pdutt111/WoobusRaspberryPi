@@ -11,7 +11,7 @@ var details=require('./authentication/detailsFetch');
 var log = require('tracer').colorConsole(config.get('log'));
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var content = require('./routes/routeDetailsCalls');
+var content = require('./routes/RouteDetailsCalls');
 var route = require('./routes/ContentCalls');
 
 var app = express();
