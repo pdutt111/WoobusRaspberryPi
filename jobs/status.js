@@ -55,7 +55,7 @@ var job = new CronJob({
                     url: url
                 }
                 request(options, function (err, res, body) {
-                   log.info(err,res,body);
+                   log.info(body);
                 })
                 var loc=new buslocation(params);
                 loc.save(function(err,loc,info){
