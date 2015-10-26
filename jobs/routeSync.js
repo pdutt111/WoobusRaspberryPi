@@ -32,13 +32,18 @@ var job = new CronJob({
                     url: url
                 }
                 request(options, function (err, res, body) {
-                    var businfo=JSON.parse(body);
-                    businfo.route.created_time=new Date();
-                    businfo.route.modified_time=new Date();
-                    var route=new routeTable(businfo.route);
-                    route.save(function(err,route,info){
+                    log.info(body);
+                    try {
+                        var businfo = JSON.parse(body);
+                        businfo.route.created_time = new Date();
+                        businfo.route.modified_time = new Date();
+                        var route = new routeTable(businfo.route);
+                        route.save(function (err, route, info) {
 
-                    })
+                        })
+                    }catch(e){
+                        log.warn(e);
+                    }
                 })
 
     },
