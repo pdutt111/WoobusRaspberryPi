@@ -46,12 +46,8 @@ daemon.start(function() {
     });
     listener.watch();
     listener.on('TPV',function(tpvData){
-        log.info(tpvData);
         events.emitter.emit("location",tpvData);
     });
-    listener.version(); /* a INFO event will be emitted */
-    listener.devices(); /* a DEVICES event will be emitted */
-    listener.device(); /* a DEVICE event will be emitted */
 });
 
 
