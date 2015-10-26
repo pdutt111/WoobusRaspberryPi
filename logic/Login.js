@@ -84,18 +84,14 @@ var users={
     },
     verifyPhonenumber:function(req,res){
         var def=new q.defer();
-        pinTable.find({phonenumber:req.body.phonenumber},function(err,pin){
+        pinTable.find({phonenumber:req.body.phonenumber,pin:req.body.pin},function(err,pin){
             console.log(err,pin);
                 if(!err&&pin){
                     userTable.findOne({phonenumber:req.body.phonenumber},function(err,user) {
                         if(!err&&user) {
-                            pinTable.update({phonenumber:req.body.phonenumber},{$set:{used:true}},{multi:false}).exec()
-                                .then(function(info){
-                                    log.info(info);
-                                })
-                                .then(null,function(err){
-                                    log.warn(err)
-                                })
+                            pinTable.update({phonenumber:req.body.phonenumber},{$set:{used:true}},function(err,info){
+
+                            });
                             user.is_verified=true;
                             user.save(function(err,user,info){
                                 console.log(user);
