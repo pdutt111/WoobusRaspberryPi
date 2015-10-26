@@ -125,7 +125,6 @@ router.post('/protected/info/renew',params({body:['secret']},{message : config.g
     });
 
 router.get('/protected/info',params({headers:['authorization']},{message : config.get('error.badrequest')}),function(req,res,next){
-    req.user=req.user.toObject();
     delete req.user.password;
     delete req.user._id;
     res.json(req.user);

@@ -84,9 +84,10 @@ var users={
     },
     verifyPhonenumber:function(req,res){
         var def=new q.defer();
-        pinTable.find({phonenumber:req.body.phonenumber,pin:req.body.pin,used:false},function(err,pin){
-            console.log(err,pin);
-                if(!err&&pin){
+        console.log(req.body);
+        pinTable.find({phonenumber:req.body.phonenumber,pin:Number(req.body.pin),used:false},function(err,pin){
+            log.warn(err,pin);
+                if(!err&&pin.length>0){
                     userTable.findOne({phonenumber:req.body.phonenumber},function(err,user) {
                         if(!err&&user) {
                             pinTable.update({phonenumber:req.body.phonenumber},{$set:{used:true}},function(err,info){
