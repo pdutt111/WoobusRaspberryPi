@@ -42,6 +42,9 @@ var listener = new gpsd.Listener({
     },
     parse: true
 });
+listener.connect(function() {
+    console.log('Connected');
+});
 listener.on('TPV', function(tpvData){
     log.info(tpvData);
     events.emitter.emit("location",tpvData);
