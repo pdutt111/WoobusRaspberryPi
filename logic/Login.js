@@ -89,7 +89,7 @@ var users={
                 if(!err&&pin){
                     userTable.findOne({phonenumber:req.body.phonenumber},function(err,user) {
                         if(!err&&user) {
-                            pinTable.update({phonenumber:req.body.phonenumber},{$set:{used:true}}).exec()
+                            pinTable.update({phonenumber:req.body.phonenumber},{$set:{used:true}},{multi:false}).exec()
                                 .then(function(info){
                                     log.info(info);
                                 })
