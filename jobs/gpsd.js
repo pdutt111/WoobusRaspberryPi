@@ -26,7 +26,9 @@ var listener = new gpsd.Listener({
     port: 2947,
     hostname: 'localhost',
     logger:  {
-        info: function() {},
+        info: function(info) {
+            log.info(info)
+        },
         warn: console.warn,
         error: console.error
     },
