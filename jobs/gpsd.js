@@ -44,10 +44,11 @@ daemon.start(function() {
     listener.connect(function() {
         console.log('Connected');
     });
+    listener.watch();
+    listener.on(function(tpvData){
+        log.info(tpvData);
+        events.emitter.emit("location",tpvData);
+    })
 });
 
 
-listener.on('TPV', function(tpvData){
-    log.info(tpvData);
-    events.emitter.emit("location",tpvData);
-})
