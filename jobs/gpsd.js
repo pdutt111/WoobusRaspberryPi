@@ -15,8 +15,12 @@ var daemon = new gpsd.Daemon({
         info: function(info) {
             log.info(info);
         },
-        warn: console.warn,
-        error: console.error
+        warn: function(warn){
+            log.warn(warn);
+        },
+        error: function(warn){
+            log.warn(warn);
+        }
     }
 });
 daemon.start(function() {
@@ -29,8 +33,12 @@ var listener = new gpsd.Listener({
         info: function(info) {
             log.info(info)
         },
-        warn: console.warn,
-        error: console.error
+        warn: function(warn){
+            log.warn(warn);
+        },
+        error: function(warn){
+            log.warn(warn);
+        }
     },
     parse: true
 });
