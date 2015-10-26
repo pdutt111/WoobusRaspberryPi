@@ -23,9 +23,6 @@ var daemon = new gpsd.Daemon({
         }
     }
 });
-daemon.start(function() {
-    console.log('Started');
-});
 var listener = new gpsd.Listener({
     port: 2947,
     hostname: 'localhost',
@@ -42,9 +39,14 @@ var listener = new gpsd.Listener({
     },
     parse: true
 });
-listener.connect(function() {
-    console.log('Connected');
+daemon.start(function() {
+    console.log('Started');
+    listener.connect(function() {
+        console.log('Connected');
+    });
 });
+
+
 listener.on('TPV', function(tpvData){
     log.info(tpvData);
     events.emitter.emit("location",tpvData);
