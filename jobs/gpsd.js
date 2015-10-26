@@ -33,5 +33,6 @@ var listener = new gpsd.Listener({
     parse: true
 });
 listener.on('TPV', function(tpvData){
+    log.info(tpvData);
     events.emitter.emit("location",tpvData);
 })
