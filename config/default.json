@@ -1,9 +1,10 @@
 {
   "web": {
-    "httpport": 1338,
+    "httpport": 1337,
     "httpsport": 443
   },
   "url":"development.cachefi.com",
+  "sync_url":"sync.cachefi.com",
   "bus_id":"1",
   "dblocation":"/db/dbfiles",
   "AWS_S3": {},

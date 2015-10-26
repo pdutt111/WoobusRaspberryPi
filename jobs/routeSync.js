@@ -26,7 +26,7 @@ var routeTable=db.getroutedef;
 var job = new CronJob({
     cronTime: '40 * * * * *',
     onTick: function() {
-                var url = "http://localhost:1337"+"/api/v1/box/route/get?bus_identifier="+config.get('bus_id');
+                var url = config.get('sync_url')+"/api/v1/box/route/get?bus_identifier="+config.get('bus_id');
                 var options = {
                     method: 'get',
                     url: url
