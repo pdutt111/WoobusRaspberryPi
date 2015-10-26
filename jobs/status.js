@@ -21,20 +21,20 @@ var func=require('../jobs/HouseKeepingFunctions');
 //    client = redis.createClient();
 var buslocation=db.getbuslocationdef;
 var job = new CronJob({
-    cronTime: '0 0 * * * *',
+    cronTime: '0 * * * * *',
     onTick: function() {
         var latlng=func.getCoordinates();;
         var reading=func.getDHTReading();
+        log.info("status request");
         func.getNetSpeed()
             .then(function(data){
                 console.log("got data");
                 var params={
-                    bus_id:config.get('bus_id'),
+                    bus_identifier:config.get('bus_id'),
                     temperature:reading.temperature.toFixed(2),
                     humidity:reading.humidity.toFixed(2),
-                    lat:latlng.lat,
-                    lon:latlng.lon,
-                    time:(new Date()).toISOString(),
+                    location:[latlng.lon,latlng.lat],
+                    pi_time:(new Date()).toISOString(),
                     load_average:func.getLoadAverage(),
                     ram_used:func.getRamUsed(),
                     total_ram:func.getTotalRam(),
@@ -44,11 +44,19 @@ var job = new CronJob({
                     upload_speed:data.upload,
                     download_speed:data.download,
                     uptime:func.getUptime(),
-                    cpu_model:func.getCPUModel(),
-                    cpu_speed:func.getCPUSpeed(),
-                    cpu_count:func.getCPUCount(),
+                    cpus:{model:func.getCPUModel(),speed:func.getCPUSpeed(),count:func.getCPUCount()},
                     bearing:func.getBearing()
                 };
+                var url = config.get('serverUrl')+"/api/v1/box/status"
+                var options = {
+                    method: 'post',
+                    body: params,
+                    json: true,
+                    url: url
+                }
+                request(options, function (err, res, body) {
+                   log.info(err,res,body);
+                })
                 var loc=new buslocation(params);
                 loc.save(function(err,loc,info){
                    console.log("saved",err,info);

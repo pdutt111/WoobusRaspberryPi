@@ -14,9 +14,9 @@ var routeTable=db.getroutedef;
 var route={
     getRoute:function(req,res){
         var def= q.defer();
-        routeTable.find({active:true},function(err,route){
+        routeTable.find({active:true}).sort({created_time:1}).limit(1).exec(function(err,routes){
             if(!err){
-                def.resolve(route);
+                def.resolve(routes[0]);
             }else{
                 log.warn(err);
                 def.reject({status: 500, message: config.get('error.dberror')});

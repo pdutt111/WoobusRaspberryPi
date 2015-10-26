@@ -1,4 +1,6 @@
 require('./jobs/status.js');
+require('./jobs/gpsd.js');
+require('./jobs/routeSync.js');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -11,8 +13,8 @@ var details=require('./authentication/detailsFetch');
 var log = require('tracer').colorConsole(config.get('log'));
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var content = require('./routes/RouteDetailsCalls');
-var route = require('./routes/ContentCalls');
+var route = require('./routes/RouteDetailsCalls');
+var content = require('./routes/ContentCalls');
 
 var app = express();
 

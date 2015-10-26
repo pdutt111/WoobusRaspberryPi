@@ -68,14 +68,16 @@ var busschema=new LinvoDB("bus",{
 var routesSchema=new LinvoDB("Routes",{
     start:{type:String,index:true},
     end:{type:String,index:true},
+    start_loc:{type:[Number]},
+    end_loc:{type:[Number]},
     boarding_points:[{
         point:String,
-        location:{type:[Number],index:"2dsphere"},
+        location:{type:[Number]},
         time_taken:Number,
         _id:false}],
     scheduled_stops:[{
         name:String,
-        location:{type:[Number], index:"2dsphere"},
+        location:{type:[Number]},
         restaurants_available:[String],
         is_loo:Boolean,
         is_snacks:Boolean,

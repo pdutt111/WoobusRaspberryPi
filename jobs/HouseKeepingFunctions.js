@@ -6,6 +6,11 @@ var q= require('q');
 var os=require('os');
 var util = require('util');
 var speedtest=require('speedtest-net');
+var events=require('../events');
+var location_data={lat:0,lon:0,speed:0,track:0};
+events.emitter.on('location',function(data){
+    location_data=data;
+});
 
 var func={
     getDHTReading:function(){
@@ -18,8 +23,8 @@ var func={
     },
     getCoordinates:function(){
         var coords={
-            lat:0,
-            lon:0
+            lat:location_data.lat,
+            lon:location_data.lon
         }
         return coords;
     },
@@ -27,10 +32,10 @@ var func={
         return 0;
     },
     getSpeed:function(){
-        return 0;
+        return location_data.speed;
     },
     getBearing:function(){
-        return "";
+        return location_data.track;
     },
     getUptime:function(){
         return os.uptime()
