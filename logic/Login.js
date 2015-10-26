@@ -84,7 +84,7 @@ var users={
     },
     verifyPhonenumber:function(req,res){
         var def=new q.defer();
-        pinTable.find({phonenumber:req.body.phonenumber,pin:req.body.pin},function(err,pin){
+        pinTable.find({phonenumber:req.body.phonenumber,pin:req.body.pin,used:false},function(err,pin){
             console.log(err,pin);
                 if(!err&&pin){
                     userTable.findOne({phonenumber:req.body.phonenumber},function(err,user) {
