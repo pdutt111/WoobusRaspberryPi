@@ -15,7 +15,7 @@ var route={
     getRoute:function(req,res){
         var def= q.defer();
         routeTable.find({active:true}).sort({created_time:1}).limit(1).exec(function(err,routes){
-            if(!err){
+            if(!err&&routes.length>0){
                 def.resolve(routes[0]);
             }else{
                 log.warn(err);
