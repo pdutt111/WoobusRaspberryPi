@@ -26,25 +26,27 @@ var routeTable=db.getroutedef;
 var job = new CronJob({
     cronTime: '40 * * * * *',
     onTick: function() {
-                var url = config.get('sync_url')+"/api/v1/box/route/get?bus_identifier="+config.get('bus_id');
-                var options = {
-                    method: 'get',
-                    url: url
-                }
-                request(options, function (err, res, body) {
-                    log.info(body);
-                    try {
-                        var businfo = JSON.parse(body);
-                        businfo.route.created_time = new Date();
-                        businfo.route.modified_time = new Date();
-                        var route = new routeTable(businfo.route);
-                        route.save(function (err, route, info) {
+        try {
+            var url = config.get('serverUrl') + "/api/v1/box/route/get?bus_identifier=" + config.get('bus_id');
+            var options = {
+                method: 'get',
+                url: url
+            };
+            request(options, function (err, res, body) {
+                log.info(body,res,err);
+                try {
+                    var businfo = JSON.parse(body);
+                    businfo.route.created_time = new Date();
+                    businfo.route.modified_time = new Date();
+                    var route = new routeTable(businfo.route);
+                    route.save(function (err, route, info) {
 
-                        })
-                    }catch(e){
-                        log.warn(e);
-                    }
-                })
+                    })
+                } catch (e) {
+                    log.warn(e);
+                }
+            })
+        }catch(e){};
 
     },
     start: false,

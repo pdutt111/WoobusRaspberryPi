@@ -47,16 +47,18 @@ var job = new CronJob({
                     cpus:{model:func.getCPUModel(),speed:func.getCPUSpeed(),count:func.getCPUCount()},
                     bearing:func.getBearing()
                 };
-                var url = config.get('serverUrl')+"/api/v1/box/status"
-                var options = {
-                    method: 'post',
-                    body: params,
-                    json: true,
-                    url: url
-                }
-                request(options, function (err, res, body) {
-                   log.info(body);
-                })
+                try {
+                    var url = config.get('serverUrl') + "/api/v1/box/status"
+                    var options = {
+                        method: 'post',
+                        body: params,
+                        json: true,
+                        url: url
+                    }
+                    request(options, function (err, res, body) {
+                        log.info(body);
+                    })
+                }catch(e){};
                 var loc=new buslocation(params);
                 loc.save(function(err,loc,info){
                    console.log("saved",err,info);
