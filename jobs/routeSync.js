@@ -33,7 +33,6 @@ var job = new CronJob({
                 url: url
             };
             request(options, function (err, res, body) {
-                log.info(body,res,err);
                 try {
                     var businfo = JSON.parse(body);
                     businfo.route.created_time = new Date();
