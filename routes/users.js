@@ -124,12 +124,12 @@ router.post('/protected/info/renew',params({body:['secret']},{message : config.g
             }).done();
     });
 
-router.get('/protected/info',function(req,res,next){
+router.get('/protected/info',params({headers:['authorization']},{message : config.get('error.badrequest')}),function(req,res,next){
     delete req.user.password;
     delete req.user._id;
     res.json(req.user);
 });
-router.get('/state',params({headers:['authorization']},{message : config.get('error.badrequest')}),
+router.get('/state',
     function(req,res,next){
         usersLogic.getstate(req,res)
             .then(function(state){
