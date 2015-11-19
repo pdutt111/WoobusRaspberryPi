@@ -64,9 +64,11 @@ var func={
     },
     getNetSpeed:function(){
         var def= q.defer();
-        speedtest().on('data',function(data){
-            def.resolve(data.speeds);
-        });
+        try{
+            //speedtest().on('data',function(data){
+            //    def.resolve(data.speeds);
+            //});
+        }catch(e){}
         def.resolve({download:0,upload:0});
         return def.promise;
     }

@@ -13,10 +13,10 @@
   "smsIndia": {},
   "mongo": {
     "location": "localhost",
-    "database":"woobus",
+    "database":"woobusraspberrypi",
     "debug": false
   },
-  "serverUrl":"http://sync.cachefi.com",
+  "serverUrl":"sync.cachefi.com",
   "state":{
     "in_bus":true,
     "bookings":true,

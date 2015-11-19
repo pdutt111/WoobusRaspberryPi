@@ -21,53 +21,56 @@ var func=require('../jobs/HouseKeepingFunctions');
 //    client = redis.createClient();
 var buslocation=db.getbuslocationdef;
 var job = new CronJob({
-    cronTime: '0 * * * * *',
+    cronTime: '45 * * * * *',
     onTick: function() {
-        var latlng=func.getCoordinates();;
-        var reading=func.getDHTReading();
+        try{
+        var latlng = func.getCoordinates();
+        var reading = func.getDHTReading();
         log.info("status request");
         func.getNetSpeed()
-            .then(function(data){
+            .then(function (data) {
                 console.log("got data");
-                var params={
-                    bus_identifier:config.get('bus_id'),
-                    temperature:reading.temperature.toFixed(2),
-                    humidity:reading.humidity.toFixed(2),
-                    location:[latlng.lon,latlng.lat],
-                    pi_time:(new Date()).toISOString(),
-                    load_average:func.getLoadAverage(),
-                    ram_used:func.getRamUsed(),
-                    total_ram:func.getTotalRam(),
-                    ram_used_process:func.getRamUsedProcess(),
-                    users_connected:func.getUsersConnected(),
-                    speed:func.getSpeed(),
-                    upload_speed:data.upload,
-                    download_speed:data.download,
-                    uptime:func.getUptime(),
-                    cpus:{model:func.getCPUModel(),speed:func.getCPUSpeed(),count:func.getCPUCount()},
-                    bearing:func.getBearing()
+                var params = {
+                    bus_identifier: config.get('bus_id'),
+                    temperature: reading.temperature.toFixed(2),
+                    humidity: reading.humidity.toFixed(2),
+                    location: [latlng.lon, latlng.lat],
+                    pi_time: (new Date()).toISOString(),
+                    load_average: func.getLoadAverage(),
+                    ram_used: func.getRamUsed(),
+                    total_ram: func.getTotalRam(),
+                    ram_used_process: func.getRamUsedProcess(),
+                    users_connected: func.getUsersConnected(),
+                    speed: func.getSpeed(),
+                    upload_speed: data.upload,
+                    download_speed: data.download,
+                    uptime: func.getUptime(),
+                    cpus: {model: func.getCPUModel(), speed: func.getCPUSpeed(), count: func.getCPUCount()},
+                    bearing: func.getBearing()
                 };
                 try {
-                    var url = config.get('serverUrl') + "/api/v1/box/status"
                     var options = {
                         method: 'post',
                         body: params,
                         json: true,
-                        url: url
+                        host: config.get('serverUrl'),
+                        path:"/api/v1/box/status"
                     }
                     request(options, function (err, res, body) {
                         log.info(body);
                     })
-                }catch(e){};
-                var loc=new buslocation(params);
-                loc.save(function(err,loc,info){
-                   console.log("saved",err,info);
+                } catch (e) {
+                }
+                ;
+                var loc = new buslocation(params);
+                loc.save(function (err, loc, info) {
+                    console.log("saved", err, info);
                 });
 
             })
-            .catch(function(err){
+            .catch(function (err) {
             })
-
+    }catch(e){log.warn(e);}
     },
     start: false,
     timeZone: 'Asia/Kolkata'

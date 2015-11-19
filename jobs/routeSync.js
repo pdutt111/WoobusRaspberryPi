@@ -24,23 +24,27 @@ var request=require('request');
 var buslocation=db.getbuslocationdef;
 var routeTable=db.getroutedef;
 var job = new CronJob({
-    cronTime: '40 * * * * *',
+    cronTime: '50 * * * * *',
     onTick: function() {
         try {
-            var url = config.get('serverUrl') + "/api/v1/box/route/get?bus_identifier=" + config.get('bus_id');
             var options = {
                 method: 'get',
-                url: url
+                host: config.get('serverUrl'),
+                path:"/api/v1/box/route/get?bus_identifier=" + config.get('bus_id')
             };
             request(options, function (err, res, body) {
                 try {
                     var businfo = JSON.parse(body);
-                    businfo.route.created_time = new Date();
-                    businfo.route.modified_time = new Date();
-                    var route = new routeTable(businfo.route);
-                    route.save(function (err, route, info) {
-
-                    })
+                    log.info(businfo.route);
+                    routeTable.find({start:businfo.route.start,end:businfo.route.end},function(err,route){
+                        if(!err&&route.length==0) {
+                            log.info(err,route);
+                            var route = new routeTable(businfo.route);
+                            route.save(function (err, route, info) {
+                                log.info(route);
+                            })
+                        }
+                    });
                 } catch (e) {
                     log.warn(e);
                 }

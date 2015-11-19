@@ -17,6 +17,7 @@ var gcm=require('../notificationSenders/gcmsender');
 var crypto=require('../authentication/crypto');
 
 var routeLogic=require('../logic/RouteDetails');
+var distanceCalc=require('../jobs/distance_final');
 
 var userTable;
 var pinTable;
@@ -27,11 +28,29 @@ router.get('/currentRoute',
     function(req,res,next) {
         routeLogic.getRoute(req,res)
             .then(function(content){
-                res.json(content);
+                req.content=content;
+                next();
             })
             .catch(function(err){
                 res.status(err.status).json(err.message);
             }).done();
-    });
+    },
+function(req,res){
+    var calcs=distanceCalc.getJourneyDetails();
+    var response=req.content;
+    log.info(calcs);
+    try{
+        response=response.toObject();
+    }catch(e){
+        log.warn(e);
+    }
+    for(var i in calcs){
+        log.info(i);
+        response[i]=calcs[i];
+        log.info(response[i]);
+    }
+    log.info(response);
+    res.json(response);
+});
 
 module.exports = router;

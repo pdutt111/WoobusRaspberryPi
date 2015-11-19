@@ -1,29 +1,57 @@
 /**
+ * Created by pariskshitdutt on 03/11/15.
+ */
+/**
  * Created by pariskshitdutt on 09/06/15.
  */
-var LinvoDB = require("linvodb3");
+var mongoose = require('mongoose');
+//var mockgoose=require('mockgoose');
 var config = require('config');
 var events = require('../events');
 var log = require('tracer').colorConsole(config.get('log'));
+var ObjectId = require('mongoose').Types.ObjectId;
+var validate = require('mongoose-validator');
+var nameValidator = [
+    validate({
+        validator: 'isLength',
+        arguments: [3, 50],
+        message: 'Name should be between 3 and 50 characters'
+    })
+];
+var emailValidator=[
+    validate({
+        validator: 'isEmail',
+        message: "not a valid email"
+    })
+];
+var phoneValidator = [
+    validate({
+        validator: 'isLength',
+        arguments: [10, 10],
+        message: 'Name should be between 3 and 50 characters'
+    })
+];
+var db=mongoose.createConnection(config.get('mongo.location'),config.get('mongo.database'));
 var userdef;
 var pindef;
 var busdef;
-var routedef;
+var routesdef;
+var cachefidef;
+var citiesdef;
 var bookingsdef;
 var catalogdef;
 var buslocationdef;
+var Schema = mongoose.Schema;
+mongoose.set('debug', config.get('mongo.debug'));
 /**
  * user schema stores the user data the password is hashed
  * @type {Schema}
  */
-//LinvoDB.defaults.store = { db: require("medeadown") }; // Comment out to use LevelDB instead of Medea
-
-LinvoDB.dbPath = process.cwd()+config.get('dblocation');
-var userSchema=new LinvoDB("users",{
+var userSchema=new Schema({
     email:String,
-    phonenumber:{type:String,unique:true},
-    password:{type:String},
-    name:{type:String},
+    phonenumber:{type:String,validate:phoneValidator,unique:true,dropDups:true},
+    password:{type:String,required:true},
+    name:{type:String,validate:nameValidator},
     device:{service:String,reg_id:String,active:{type:Boolean,default:true}},
     contacts:[{phonenumber:{type:String},name:String,_id:false}],
     profession:{type:String},
@@ -37,47 +65,45 @@ var userSchema=new LinvoDB("users",{
     created_time:{type:Date,default:Date.now},
     modified_time:{type:Date,default:Date.now}
 });
-userSchema.ensureIndex({fieldName:"phonenumber",unique:true});
-
-var pinschema=new LinvoDB("pins",{
+var pinschema=new Schema({
     phonenumber:{type:String},
     pin:Number,
     used:{type:Boolean,default:false}
 })
-var busschema=new LinvoDB("bus",{
-    start:String,
-    end:String,
+var busschema=new Schema({
+    user_id:{type:Schema.ObjectId,ref:'user'},
     bus_identifier:String,
+    bus_type:String,
+    row_seats:Number,
     fare:Number,
+    route:{type:Schema.ObjectId,ref:'routes',index:true},
     discounts:String,
-    scheduled_stops:[{stop:{type:String},time:Date,_id:false}],
-    departure_time:Date,
-    arrival_time:Date,
-    distance:Number,
-    boarding_points:[{point:String, location:{type:[Number]},time:Date,_id:false}],
+    discounted_price:Number,
+    images:[String],
     total_seats:Number,
-    in_transit:Boolean,
-    in_booking:Boolean,
-    media_loaded:[{name:String,path:String,is_active:Boolean,views:Number,skips:Number,_id:false}],
-    media_update:[{path:String,name:String,Description:String,replace:String}],
-    loo_requests:Number,
-    is_completed:Boolean,
+    departure_time:Date,
+    is_deleted:{type:Boolean,default:false},
+    in_transit:{type:Boolean,default:false},
+    seats:[{seat_no:Number,is_window:Boolean,is_booked:{type:Boolean,default:false},booking_id:{type:Schema.ObjectId,ref:'bookings'},_id:false}],
+    in_booking:{type:Boolean,default:true},
+    loo_requests:{type:Number,default:0},
+    is_completed:{type:Boolean,default:false},
     created_time:{type:Date,default:Date.now},
     modified_time:{type:Date,default:Date.now}
-},{});
-var routesSchema=new LinvoDB("Routes",{
+});
+var routesSchema=new Schema({
     start:{type:String,index:true},
     end:{type:String,index:true},
-    start_loc:{type:[Number]},
-    end_loc:{type:[Number]},
+    start_loc:{type:[Number],index:"2dsphere"},
+    end_loc:{type:[Number],index:"2dsphere"},
     boarding_points:[{
         point:String,
-        location:{type:[Number]},
+        location:{type:[Number],index:"2dsphere"},
         time_taken:Number,
         _id:false}],
     scheduled_stops:[{
         name:String,
-        location:{type:[Number]},
+        location:{type:[Number], index:"2dsphere"},
         restaurants_available:[String],
         is_loo:Boolean,
         is_snacks:Boolean,
@@ -91,9 +117,9 @@ var routesSchema=new LinvoDB("Routes",{
     active:{type:Boolean,default:false},
     created_time:{type:Date,default:Date.now},
     modified_time:{type:Date,default:Date.now}
-},{});
-var buslocationschema=new LinvoDB("buslocation",{
-    bus_identifier:String,
+});
+var buslocationschema=new Schema({
+    bus_identifier:{type:String},
     temperature:Number,
     humidity:String,
     speed:Number,
@@ -109,11 +135,33 @@ var buslocationschema=new LinvoDB("buslocation",{
     bearing:String,
     users_connected:Number,
     pi_time:Date,
-    location:{type:[Number]},
+    location:{type:[Number], index:"2dsphere"},
     created_time:{type:Date,default:Date.now},
     modified_time:{type:Date,default:Date.now}
-},{});
-var catalogSchema=new LinvoDB("catalog",{
+})
+var bookingschema=new Schema({
+    user_id:{type:Schema.ObjectId,ref:'user'},
+    bus_id:{type:Schema.ObjectId,ref:'buses'},
+    amount:Number,
+    is_confirmed:{type:Boolean,default:false},
+    seat_no:[Number],
+    feedback:String,
+    is_deleted:{type:Boolean,default:false},
+    created_time:{type:Date,default:Date.now},
+    modified_time:{type:Date,default:Date.now}
+});
+var citiesSchema=new Schema({
+    name:{type:String,index:true},
+    location:{type:[Number], index:"2dsphere"}
+});
+var cachefiSchema=new Schema({
+    bus_identifier:{type:String,unique:true,index:true,dropDups:true},
+    media_load:[{type:Schema.ObjectId,ref:'catalog'}],
+    in_standby:Boolean,
+    local_language:String,
+    last_refresh:Date
+});
+var catalogSchema=new Schema({
     name:String,
     description:String,
     pic:String,
@@ -121,26 +169,34 @@ var catalogSchema=new LinvoDB("catalog",{
     skips:Number,
     views:Number,
     language:String,
-    content_type:String,
-    is_verified:Boolean
-},{});
-
+    content_type:String
+})
+routesSchema.index({start:1,end:1},{unique:true});
+db.on('error', function(err){
+    log.info(err);
+});
 /**
  * once the connection is opened then the definitions of tables are exported and an event is raised
  * which is recieved in other files which read the definitions only when the event is received
  */
-    userdef=userSchema;
-    pindef=pinschema;
-    busdef=busschema;
-    routedef=routesSchema;
-    catalogdef=catalogSchema;
-    buslocationdef=buslocationschema;
+userdef=db.model('user',userSchema);
+pindef=db.model('pins',pinschema);
+busdef=db.model('buses',busschema);
+buslocationdef=db.model('buslocation',buslocationschema);
+bookingsdef=db.model('bookings',bookingschema);
+cachefidef=db.model('cachefi',cachefiSchema);
+citiesdef=db.model('cities',citiesSchema);
+routesdef=db.model('routes',routesSchema);
+catalogdef=db.model('catalog',catalogSchema);
 
-    exports.getpindef=pindef;
-    exports.getbusdef=busdef;
-    exports.getroutedef=routedef;
-    exports.getuserdef= userdef;
-    exports.getcatalogdef= catalogdef;
-    exports.getbuslocationdef= buslocationdef;
-    events.emitter.emit("db_data");
+exports.getpindef=pindef;
+exports.getbusdef=busdef;
+exports.getbookingsdef=bookingsdef;
+exports.getcitiesdef=citiesdef;
+exports.getuserdef= userdef;
+exports.getcachefidef= cachefidef;
+exports.getcatalogdef= catalogdef;
+exports.getbuslocationdef= buslocationdef;
+exports.getroutedef= routesdef;
+events.emitter.emit("db_data");
 
