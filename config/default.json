@@ -4,7 +4,7 @@
     "httpsport": 443
   },
   "url":"development.cachefi.com",
-  "sync_url":"sync.cachefi.com",
+  "sync_url":"http://sync.cachefi.com",
   "bus_id":"1",
   "dblocation":"/db/dbfiles",
   "AWS_S3": {},
@@ -16,7 +16,7 @@
     "database":"woobusraspberrypi",
     "debug": false
   },
-  "serverUrl":"sync.cachefi.com",
+  "serverUrl":"http://sync.cachefi.com",
   "state":{
     "in_bus":true,
     "bookings":true,

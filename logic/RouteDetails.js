@@ -16,6 +16,7 @@ var route={
         var def= q.defer();
         routeTable.find({active:true}).sort({created_time:1}).limit(1).exec(function(err,routes){
             if(!err&&routes.length>0){
+                //routes[0].scheduled_stops=JSON.parse(routes[0].scheduled_stops);
                 def.resolve(routes[0]);
             }else{
                 log.warn(err);

@@ -53,8 +53,7 @@ var job = new CronJob({
                         method: 'post',
                         body: params,
                         json: true,
-                        host: config.get('serverUrl'),
-                        path:"/api/v1/box/status"
+                        uri:config.get('serverUrl')+"/api/v1/box/status"
                     }
                     request(options, function (err, res, body) {
                         log.info(body);

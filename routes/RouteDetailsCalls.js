@@ -38,18 +38,23 @@ router.get('/currentRoute',
 function(req,res){
     var calcs=distanceCalc.getJourneyDetails();
     var response=req.content;
-    log.info(calcs);
+    //log.info(calcs);
     try{
         response=response.toObject();
     }catch(e){
         log.warn(e);
     }
     for(var i in calcs){
-        log.info(i);
         response[i]=calcs[i];
-        log.info(response[i]);
+        //log.info(response[i]);
     }
-    log.info(response);
+
+    var scheduled_stops= JSON.parse(response.scheduled_stops);
+    var boarding_points=JSON.parse(response.boarding_points);
+    delete response.scheduled_stops;
+    delete response.boarding_points;
+    response.scheduled_stops=scheduled_stops;
+    response.boarding_points=boarding_points;
     res.json(response);
 });
 
