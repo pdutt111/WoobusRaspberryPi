@@ -26,18 +26,21 @@ var catalog=db.getcatalogdef;
 populateMedia();
 function populateMedia(){
     fs.readdir('./movies',function(err,items){
-        for(var i=0;i<items.length;i++){
-            log.info('./movies/'+items[i]);
-            exif('./movies/'+items[i], function (err, metadata) {
+        if(!err&&items&&items.length>0){
+            for(var i=0;i<items.length;i++){
+                log.info('./movies/'+items[i]);
+                exif('./movies/'+items[i], function (err, metadata) {
                     log.info(err,metadata.title);
-                var client = new WebTorrent()
-                //var buffer = fs.readFileSync('./movies/'+this.name);
+                    var client = new WebTorrent()
+                    //var buffer = fs.readFileSync('./movies/'+this.name);
                     client.seed(['./movies/'+this.name], function (torrent) {
                         console.log('Client is seeding ' + torrent.infoHash)
                     })
 
-            }.bind({name:items[i]}));
+                }.bind({name:items[i]}));
+            }
         }
+
 
     })
 }
