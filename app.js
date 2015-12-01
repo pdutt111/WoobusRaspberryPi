@@ -2,6 +2,7 @@ require('./jobs/status.js');
 require('./jobs/gpsd.js');
 require('./jobs/calculateDistance.js');
 require('./jobs/routeSync.js');
+require('./jobs/CalculateMedia.js');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');

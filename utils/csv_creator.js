@@ -7,18 +7,19 @@ var fs = require('fs');
 var converter = require('json-2-csv');
 
 var wstream = fs.createWriteStream('myOutput.csv');
-wstream.write("aes,arrTime,busType,DateOfJourney,depTime,DPInformationList,FromCity,FromCityId,maxLowerColumns," +
+wstream.write("aes,arrTime,busType,DateOfJourney,depTime,FromCity,FromCityId,maxLowerColumns," +
     "maxLowerRows,maxUpperColumns,maxUpperRows,MPax,mxSPrTxn,Notes,operatorId,RouteId,ToCity,ToCityId," +
     "Travels,vehicleType,amenties,travelDate,depTimeString,arrTimeString,isBPMapLinkShown,boardingPoints," +
-    "total_seats,fare,seats_available,seats_booked");
+    "total_seats,fare,seats_available,seats_booked\n");
 var url = 'mongodb://localhost:27017/redbus';
-// Use connect method to connect to the Server
+// Use connect method to connect to the Server\
+//last print 453437
 MongoClient.connect(url, function(err, db) {
-    var cursor =db.collection('redbus').find( {},{seats_data:1}).limit(10);
+    var cursor =db.collection('redbus').find({});
     var count=0;
+    //cursor.skip(455755);
     cursor.each(function(err,doc) {
-        count++;
-        console.log(count);
+        console.log(count++);
             if (doc != null && doc.seats_data != null) {
                 try {
                     var output = doc.seats_data;
@@ -53,15 +54,19 @@ MongoClient.connect(url, function(err, db) {
                 }
                 for(var key in output){
                     if(typeof output[key]=="string")
-                    output[key]=output[key].replace(",",";");
+                    output[key]=output[key].replace(/,/g,";");
                 }
                 converter.json2csv(output, function (err, csv) {
-                    console.log(csv.split("\n")[1]);
-                    wstream.write(csv.split("\n")[1]);
+                    //console.log(err);
+                    if(err){
+                        console.log("content:",err,csv);
+                        process.kill(process.pid);
+                    }
+                    wstream.write(csv.split("\n")[1]+"\n");
                 });
-                //if(!cursor.hasNext()._result){
-                //    db.close();
-                //}
+                if(!cursor.hasNext()._result){
+                    //db.close();
+                }
             }
 
     });

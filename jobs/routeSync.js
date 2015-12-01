@@ -1,12 +1,6 @@
 /**
  * Created by pariskshitdutt on 25/10/15.
  */
-/**
- * Created by pariskshitdutt on 21/09/15.
- */
-/**
- * Created by pariskshitdutt on 15/09/15.
- */
 var config= require('config');
 var jwt = require('jwt-simple');
 var ObjectId = require('mongoose').Types.ObjectId;

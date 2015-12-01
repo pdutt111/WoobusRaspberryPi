@@ -10,8 +10,8 @@
     var client = new WebTorrent()
 
     // Go to https://instant.io, seed a file and use the magnet uri generated
-    var magnetUri = '4e2e4c96b4b5f0fa63587edb66bceab44ab14aa4'
-
+    var magnetUri = '2d3d1cc0e6616b7264fbd374c66d7f316d097833'
+    console.log("loading file");
     client.add(magnetUri, function (torrent) {
         // Got torrent metadata!
         console.log('Torrent info hash:', torrent.infoHash)
