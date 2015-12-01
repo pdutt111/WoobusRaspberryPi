@@ -1,11 +1,11 @@
 ///**
 // * Created by pariskshitdutt on 25/10/15.
 // */
-//var gpsd = require('node-gpsd');
-//var events=require('../events');
-//var config= require('config');
-//var log = require('tracer').colorConsole(config.get('log'));
-//
+var gpsd = require('node-gpsd');
+var events=require('../events');
+var config= require('config');
+var log = require('tracer').colorConsole(config.get('log'));
+
 var daemon = new gpsd.Daemon({
     program: 'gpsd',
     device: '/dev/ttyAMA0',
