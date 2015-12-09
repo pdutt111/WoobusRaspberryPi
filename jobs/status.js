@@ -29,7 +29,7 @@ var job = new CronJob({
         log.info("status request");
         func.getNetSpeed()
             .then(function (data) {
-                console.log("got data");
+                console.log("getting ");
                 var params = {
                     bus_identifier: config.get('bus_id'),
                     temperature: reading.temperature.toFixed(2),

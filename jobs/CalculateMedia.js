@@ -31,11 +31,12 @@ function populateMedia(){
                 log.info('./movies/'+items[i]);
                 exif('./movies/'+items[i], function (err, metadata) {
                     log.info(err,metadata.title);
-                    var client = new WebTorrent()
+                    log.info(metadata);
+                    //var client = new WebTorrent({dht:false});
                     //var buffer = fs.readFileSync('./movies/'+this.name);
-                    client.seed(['./movies/'+this.name], function (torrent) {
-                        console.log('Client is seeding ' + torrent.infoHash)
-                    })
+                    //client.seed(['./movies/'+this.name], function (torrent) {
+                    //    console.log('Client is seeding ' + torrent.infoHash)
+                    //})
 
                 }.bind({name:items[i]}));
             }

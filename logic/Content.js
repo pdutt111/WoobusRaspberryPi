@@ -22,12 +22,33 @@ var catalogTable=db.getcatalogdef;
 var content={
     getContent:function(req,res){
         var def= q.defer();
-        catalogTable.find({is_verified:true},function(err,catalog){
+        //var movie=new catalogTable({name:"Tanu Weds Manu",
+        //    description:"Its a story of a married couple who lose their spark",
+        //    pic:"tanuwedsmanu.jpg",path:"tanu.mp4",
+        //    skips:0, views:0, language:"hindi",
+        //    content_type:"media/mp4",is_verified:true});
+        //movie.save(function(err,info){
+        //    log.info(err,info);
+        //});
+        catalogTable.find({},function(err,catalog){
             if(!err){
                 def.resolve(catalog);
             }else{
                 def.reject({status: 500, message: config.get('error.dberror')});
             }
+        });
+        return def.promise;
+    },
+    postContent:function(req,res){
+        var def= q.defer();
+        catalogTable.remove({},function(err,info){
+            if(err)
+                log.info(err);
+            log.info(req.body);
+            catalogTable.save(req.body,function(err,info){
+                def.resolve(config.get('ok'));
+            });
+
         });
         return def.promise;
     }

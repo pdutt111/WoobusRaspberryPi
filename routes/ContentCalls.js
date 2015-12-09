@@ -27,14 +27,24 @@ pinTable=db.getpindef;
 //        .then(function(info){
 //            res.json(config.get('ok'))
 //        })
-//        .catch(function(err){
+//        .catch(function(err){8
 //            res.status(err.status).json(err.message);
 //        })
 //});
 
-router.get('/content',
+router.get('/',
     function(req,res,next) {
         contentLogic.getContent(req,res)
+            .then(function(content){
+                res.json(content);
+            })
+            .catch(function(err){
+                res.status(err.status).json(err.message);
+            }).done();
+    });
+router.post('/',
+    function(req,res,next) {
+        contentLogic.postContent(req,res)
             .then(function(content){
                 res.json(content);
             })

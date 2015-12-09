@@ -17,11 +17,11 @@ var getJourneyDetails=function(){
     log.info(data);
     if(data){
         var speed=func.getSpeed();
-        if(speed!=0){
+        if(speed==0){
             speed=50;
         }
         var timeElapsed=(new Date()-data.calc_time);
-        console.log(new Date(),data.calc_time);
+        log.info(new Date(),data.calc_time);
         var distanceCovered=speed*timeElapsed/(1000*60*60);
         response.current_distance=Number(((data.distanceValue-distanceCovered)/1000).toFixed(0));
         response.current_time_taken=(data.durationValue*1000-timeElapsed);
