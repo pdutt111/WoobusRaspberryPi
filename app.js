@@ -84,14 +84,13 @@ app.use(
 /**
  * routes
  */
-app.use('/',function(req,res){
-res.redirect('/splash.html')
-})
 app.use('/api/v1/', routes);
 app.use('/api/v1/users', users);
 app.use('/api/v1/content', content);
 app.use('/api/v1/route', route);
-
+app.use('/',function(req,res){
+    res.render('splash')
+})
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
