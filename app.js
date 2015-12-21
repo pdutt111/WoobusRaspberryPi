@@ -84,7 +84,7 @@ app.use(
 /**
  * routes
  */
-app.use('/',function(){
+app.use('/',function(req,res){
 res.redirect('/splash.html')
 })
 app.use('/api/v1/', routes);
