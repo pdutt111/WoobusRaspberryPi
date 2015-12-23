@@ -18,7 +18,12 @@ var bcrypt = require('bcrypt');
 var userTable=db.getuserdef;
 var pinTable=db.getpindef;
 var catalogTable=db.getcatalogdef;
+var movies=[];
 
+events.emitter.on("movie found",function(movie){
+    log.info(movie);
+    movies.push(movie);
+})
 var content={
     getContent:function(req,res){
         var def= q.defer();
@@ -32,7 +37,8 @@ var content={
         //});
         catalogTable.find({},function(err,catalog){
             if(!err){
-                def.resolve(catalog);
+                response=catalog.concat(movies);
+                def.resolve(response);
             }else{
                 def.reject({status: 500, message: config.get('error.dberror')});
             }
