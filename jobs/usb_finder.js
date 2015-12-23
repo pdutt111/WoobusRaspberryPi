@@ -52,7 +52,7 @@ var job = new CronJob({
             fs.readdir(path,function(err,files){
                 if(!err) {
                     for (var i = 0; i < files.length; i++) {
-                        if (files[i].split(".")[files[i].split(".")-1] == "mp4") {
+                        if (files[i].split(".")[files[i].split(".").length-1] == "mp4") {
                             var movie={
                                 name: files[i],
                                 path: path + "/" + files[i],
