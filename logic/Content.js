@@ -19,10 +19,16 @@ var userTable=db.getuserdef;
 var pinTable=db.getpindef;
 var catalogTable=db.getcatalogdef;
 var movies=[];
-
+var movies_added={};
+events.emitter.on("clear movies",function(){
+   movies=[];
+});
 events.emitter.on("movie found",function(movie){
-    log.info(movie);
-    movies.push(movie);
+        if(movies_added[movie.name]){
+            movies.push(movie);
+            movies_added[movie.name]=true;
+        }
+
 })
 var content={
     getContent:function(req,res){

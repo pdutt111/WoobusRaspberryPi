@@ -3,6 +3,7 @@
  */
 var config= require('config');
 var jwt = require('jwt-simple');
+var fs=require('fs');
 var ObjectId = require('mongoose').Types.ObjectId;
 var moment= require('moment');
 var async= require('async');
@@ -19,9 +20,9 @@ var _basePath="/media/"
 var buslocation=db.getbuslocationdef;
 var routeTable=db.getroutedef;
 var job = new CronJob({
-    cronTime: '15 * * * * *',
+    cronTime: '*/15 * * * * *',
     onTick: function() {
-        var fs=require('fs');
+        events.emitter.emit("clear movies");
         fs.readdir(_basePath,function(err,files){
             if(!err){
                 for (var i = 0; i < files.length; i++) {
