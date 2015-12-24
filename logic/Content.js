@@ -27,6 +27,7 @@ events.emitter.on("movie found",function(movie){
         if(!movies_added[movie.name]){
             movies.push(movie);
             movies_added[movie.name]=true;
+            log.info(movie);
         }
 
 })
