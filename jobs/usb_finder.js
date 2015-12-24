@@ -56,7 +56,7 @@ var job = new CronJob({
                             var movie={
                                 name: files[i],
                                 path: path + "/" + files[i],
-                                content_type: "media/mp4",
+                                content_type: "movie",
                                 source: "usb"
                             }
                             log.info(movie);
