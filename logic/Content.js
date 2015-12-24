@@ -44,7 +44,7 @@ var content={
         //});
         catalogTable.find({},function(err,catalog){
             if(!err){
-                response=catalog.concat(movies);
+                var response=catalog.concat(movies);
                 def.resolve(response);
             }else{
                 def.reject({status: 500, message: config.get('error.dberror')});
