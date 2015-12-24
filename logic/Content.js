@@ -21,7 +21,8 @@ var catalogTable=db.getcatalogdef;
 var movies=[];
 var movies_added={};
 events.emitter.on("clear movies",function(){
-   movies=[];
+    movies=[];
+    movies_added={}
 });
 events.emitter.on("movie found",function(movie){
         if(!movies_added[movie.name]){
