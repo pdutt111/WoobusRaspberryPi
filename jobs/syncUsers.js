@@ -58,8 +58,6 @@ var job = new CronJob({
 
                     }
                     ;
-                }else{
-                    updateSyncTime();
                 }
             });
             });
