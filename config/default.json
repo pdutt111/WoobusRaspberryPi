@@ -17,6 +17,7 @@
     "debug": false
   },
   "serverUrl":"http://sync.cachefi.com",
+  "devUrl":"http://localhost:1340",
   "state":{
     "in_bus":true,
     "bookings":true,

@@ -44,6 +44,8 @@ var users={
                 req.body.is_operator=false;
                 req.body.is_random_password=true;
                 req.body.is_verified=false;
+                req.body.created_time=new Date();
+                req.body.modified_time=new Date();
 
                 var user = new userTable(req.body);
                 user.save(function(err,user,info){
@@ -95,7 +97,6 @@ var users={
                             });
                             user.is_verified=true;
                             user.save(function(err,user,info){
-                                console.log(user);
                                 var tokendata={
                                     _id:user._id,
                                     phonenumber:user.phonenumber,
