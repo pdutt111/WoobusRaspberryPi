@@ -46,7 +46,7 @@ var job = new CronJob({
                                 method: 'post',
                                 body: data,
                                 json: true,
-                                uri: config.get('devUrl') + "/api/v1/box/feedback"
+                                uri: config.get('serverUrl') + "/api/v1/box/feedback"
                             }
                             request(options, function (err, res, body) {
                                 log.info(err,body);
