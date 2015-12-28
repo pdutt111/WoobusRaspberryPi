@@ -5,6 +5,7 @@ require('./jobs/routeSync.js');
 require('./jobs/CalculateMedia.js');
 require('./jobs/usb_finder.js');
 require('./jobs/syncUsers.js');
+require('./jobs/syncFeedbacks.js');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');

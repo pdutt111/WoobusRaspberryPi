@@ -12,6 +12,7 @@ var routedef;
 var bookingsdef;
 var catalogdef;
 var buslocationdef;
+var feedbackdef;
 /**
  * user schema stores the user data the password is hashed
  * @type {Schema}
@@ -21,6 +22,7 @@ var buslocationdef;
 LinvoDB.dbPath = process.cwd()+config.get('dblocation');
 var userSchema=new LinvoDB("users",{
     email:String,
+    bus_id:String,
     phonenumber:{type:String,unique:true},
     password:{type:String},
     name:{type:String},
@@ -123,6 +125,14 @@ var catalogSchema=new LinvoDB("catalog",{
     content_type:String,
     is_verified:Boolean
 },{});
+var feedbackSchema=new LinvoDB("feedback",{
+    user_id:String,
+    phonenumber:String,
+    rating:Number,
+    feedback:String,
+    created_time:{type:Date,default:Date.now},
+    modified_time:{type:Date,default:Date.now}
+})
 
 /**
  * once the connection is opened then the definitions of tables are exported and an event is raised
@@ -134,6 +144,7 @@ var catalogSchema=new LinvoDB("catalog",{
     routedef=routesSchema;
     catalogdef=catalogSchema;
     buslocationdef=buslocationschema;
+    feedbackdef=feedbackSchema;
 
     exports.getpindef=pindef;
     exports.getbusdef=busdef;
@@ -141,5 +152,6 @@ var catalogSchema=new LinvoDB("catalog",{
     exports.getuserdef= userdef;
     exports.getcatalogdef= catalogdef;
     exports.getbuslocationdef= buslocationdef;
+    exports.getfeedbackdef= feedbackdef;
     events.emitter.emit("db_data");
 

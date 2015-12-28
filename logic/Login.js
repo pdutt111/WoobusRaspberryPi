@@ -19,6 +19,7 @@ var userTable;
 var pinTable;
 userTable=db.getuserdef;
 pinTable=db.getpindef;
+var feedbackTable=db.getfeedbackdef;
 
 var users={
     pinLogic:function(req,res){
@@ -42,8 +43,9 @@ var users={
                 req.body.password=hash;
                 req.body.is_operator=false;
                 req.body.is_operator=false;
+                req.body.bus_id=config.get('bus_id');
                 req.body.is_random_password=true;
-                req.body.is_verified=false;
+                req.body.is_verified=true;
                 req.body.created_time=new Date();
                 req.body.modified_time=new Date();
 
@@ -95,16 +97,19 @@ var users={
                             pinTable.update({phonenumber:req.body.phonenumber},{$set:{used:true}},function(err,info){
 
                             });
-                            user.is_verified=true;
+                            userTable.update({_id:user._id},{$set:{is_verified:true}},function(err,info){
+                               log.info(err,info);
+                            });
                             user.save(function(err,user,info){
                                 var tokendata={
                                     _id:user._id,
                                     phonenumber:user.phonenumber,
-                                    is_verified:user.is_verified,
+                                    is_verified:true,
                                     is_operator:user.is_operator,
                                     is_admin:user.is_admin
 
                                 };
+                                log.info(tokendata);
                                 def.resolve(tokendata);
                             });
                         }else{
@@ -148,6 +153,25 @@ var users={
         }
 
         def.resolve(response);
+        return def.promise;
+    },
+    sendFeedback:function(req,res){
+        var def= q.defer();
+        req.body.created_time=new Date();
+        req.body.modified_time=new Date();
+        req.body.bus_id=config.get('bus_id');
+        req.body.phonenumber=req.user.phonenumber;
+        req.body.user_id=req.user._id;
+        req.body.bus_id=config.get('bus_id');
+        log.info(JSON.stringify(req.body));
+        var feedback=new feedbackTable(req.body);
+            feedback.save(function(err, rows) {
+                if(!err) {
+                    def.resolve();
+                } else {
+                    def.reject({status: 500, message: config.get('error.dberror')});
+                }
+            });
         return def.promise;
     },
     getstate:function(req,res){

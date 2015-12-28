@@ -48,6 +48,7 @@ router.post('/verifyPhonenumber',params({body:['phonenumber','pin']},{message : 
                 next();
             })
             .catch(function(err){
+                log.info(err);
                 if(err.status==404){
                         usersLogic.userCreate(req,res)
                             .then(function(user){
@@ -81,6 +82,16 @@ router.post('/protected/updateUserProfile',
             .catch(function(err){
                 res.status(err.status).json(err.message);
             }).done();
+    });
+router.post('/protected/feedback',
+    function(req,res,next){
+        usersLogic.sendFeedback(req,res)
+            .then(function(){
+                res.json(config.get('ok'))
+            }).catch(function(err){
+                log.error(err);
+                res.status(500).json(config.get('error.dberror'));
+            })
     });
 router.post('/signin',params({body:['phonenumber','password']},{message : config.get('error.badrequest')}),
     function(req,res,next){

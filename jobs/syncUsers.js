@@ -35,8 +35,8 @@ var job = new CronJob({
             }
             var queryTime = moment(syncTime.getTime()).subtract(15, 'minutes');
             log.info(queryTime.toString());
-            userTable.find({is_verified:true,created_time:{$gte:queryTime}},function(err,users){
-                log.info(err,users);
+            userTable.find({is_verified:true,created_time:{$gte:new Date(queryTime.toString())}},function(err,users){
+                //log.info(err,users);
                 if(users.length>0) {
                     var data = {
                         bus_identifier: config.get("bus_id"),
@@ -50,8 +50,11 @@ var job = new CronJob({
                             uri: config.get('serverUrl') + "/api/v1/box/users"
                         }
                         request(options, function (err, res, body) {
-                            if (body.result == "ok") {
-                               updateSyncTime();
+                            if(!err){
+                                if (body.result == "ok") {
+                                    updateSyncTime();
+                                    log.info("feedbacks synced");
+                                }
                             }
                         })
                     } catch (e) {
