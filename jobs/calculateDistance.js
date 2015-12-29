@@ -19,7 +19,7 @@ events.emitter.on('location',function(data){
 var distanceInterval;
 if(!distanceInterval){
     getRoute();
-distanceInterval=setInterval(getRoute,1000*30);
+distanceInterval=setInterval(getRoute,1000*60*5);
 }
 function getRoute(){
     route.getRoute(null,null)
