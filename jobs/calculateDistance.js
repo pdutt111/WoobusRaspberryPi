@@ -29,6 +29,7 @@ function getRoute(){
                 location_data.lon=routes.start_loc[0];
             }
             log.info(location_data);
+            log.info(routes.end_loc);
                 distance.get(
                     {
                         origin:location_data.lat+","+location_data.lon,
