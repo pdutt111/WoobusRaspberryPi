@@ -18,7 +18,7 @@ var request=require('request');
 var buslocation=db.getbuslocationdef;
 var routeTable=db.getroutedef;
 var job = new CronJob({
-    cronTime: '*/10 * * * * *',
+    cronTime: '10 * * * * *',
     onTick: function() {
         log.info("making routesync request");
         try {
@@ -35,7 +35,7 @@ var job = new CronJob({
                             businfo.route.scheduled_stops=JSON.stringify(businfo.route.scheduled_stops);
                             businfo.route.boarding_points=JSON.stringify(businfo.route.boarding_points);
                             routeTable.find({start:businfo.route.start,end:businfo.route.end},function(err,route){
-                                if(!err&&route.length==0) {
+                                if(!err) {
                                     routeTable.remove({},function(err,info){
                                         var route = new routeTable(businfo.route);
                                         route.save(function (err, route, info) {
