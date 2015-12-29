@@ -26,19 +26,29 @@ var job = new CronJob({
                 uri:config.get('serverUrl')+"/api/v1/box/route/get?bus_identifier=" + config.get('bus_id')
             };
             request(options, function (err, res, body) {
-                try {
-                    var businfo = JSON.parse(body);
-                    businfo.route.scheduled_stops=JSON.stringify(businfo.route.scheduled_stops);
-                    businfo.route.boarding_points=JSON.stringify(businfo.route.boarding_points);
-                    routeTable.find({start:businfo.route.start,end:businfo.route.end},function(err,route){
-                        if(!err&&route.length==0) {
-                            var route = new routeTable(businfo.route);
-                            route.save(function (err, route, info) {
+                if(!err){
+                    try {
+                        var businfo = JSON.parse(body);
+                        if(businfo.route.start&&businfo.route.end){
+                            businfo.route.scheduled_stops=JSON.stringify(businfo.route.scheduled_stops);
+                            businfo.route.boarding_points=JSON.stringify(businfo.route.boarding_points);
+                            routeTable.find({start:businfo.route.start,end:businfo.route.end},function(err,route){
+                                if(!err&&route.length==0) {
+                                    routeTable.remove({},function(err,info){
+                                        var route = new routeTable(businfo.route);
+                                        route.save(function (err, route, info) {
+                                        })
+                                    });
+                                }
+                            });
+                        }else{
+                            routeTable.remove({},function(err,info){
+                                log.info("route completed");
                             })
                         }
-                    });
-                } catch (e) {
-                    log.warn(e);
+                    } catch (e) {
+                        log.warn(e);
+                    }
                 }
             })
         }catch(e){};
