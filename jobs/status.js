@@ -21,7 +21,7 @@ var func=require('../jobs/HouseKeepingFunctions');
 //    client = redis.createClient();
 var buslocation=db.getbuslocationdef;
 var job = new CronJob({
-    cronTime: '45 * * * * *',
+    cronTime: '10 */5 * * * *',
     onTick: function() {
         try{
         var latlng = func.getCoordinates();

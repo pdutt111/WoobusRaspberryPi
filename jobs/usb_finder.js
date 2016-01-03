@@ -20,7 +20,7 @@ var _basePath="/media/";
 var buslocation=db.getbuslocationdef;
 var routeTable=db.getroutedef;
 var job = new CronJob({
-    cronTime: '*/15 * * * * *',
+    cronTime: '0 */5 * * * *',
     onTick: function() {
         events.emitter.emit("clear movies");
         fs.readdir(_basePath,function(err,files){
