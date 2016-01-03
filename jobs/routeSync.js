@@ -11,6 +11,7 @@ var events = require('../events');
 var log = require('tracer').colorConsole(config.get('log'));
 var apn=require('../notificationSenders/apnsender');
 var gcm=require('../notificationSenders/gcmsender');
+var calcDist=require('../jobs/calculateDistance');
 var CronJob = require('cron').CronJob;
 var request=require('request');
 //var redis = require("redis"),
@@ -39,6 +40,7 @@ var job = new CronJob({
                                     routeTable.remove({},function(err,info){
                                         var route = new routeTable(businfo.route);
                                         route.save(function (err, route, info) {
+                                            calcDist();
                                         })
                                     });
                                 }
@@ -46,10 +48,12 @@ var job = new CronJob({
                         }else{
                             routeTable.remove({},function(err,info){
                                 log.info("route completed");
+                                calcDist();
                             })
                         }
                     } catch (e) {
                         log.warn(e);
+                        calcDist();
                     }
                 }
             })
