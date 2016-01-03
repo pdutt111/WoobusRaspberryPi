@@ -10,6 +10,7 @@ var log = require('tracer').colorConsole(config.get('log'));
 
 var auth=function(req,res,next){
     var def= q.defer();
+    log.info(req.headers.authorization);
     if(req.originalUrl.indexOf("/protected")>-1) {
         if(req.headers.authorization){
             var token=req.headers.authorization;

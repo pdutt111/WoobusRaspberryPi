@@ -20,6 +20,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var route = require('./routes/RouteDetailsCalls');
 var content = require('./routes/ContentCalls');
+var cors = require("cors");
 
 var app = express();
 
@@ -38,6 +39,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * middleware to authenticate the jwt and routes
  */
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -49,16 +54,19 @@ app.use(function (req, res, next) {
     // Request headers you wish to allow
     res.setHeader('Access-Control-Allow-Headers', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Content-type');
+    //res.setHeader('Access-Control-Allow-Headers', 'Authorization');
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
     res.setHeader('Access-Control-Allow-Credentials', true);
-
     // Pass to next layer of middleware
     next();
 });
 app.use(
     function(req,res,next){
+        if(req.method=='OPTIONS'){
+            next();
+        }
       auth(req,res)
           .then(function(user){
               console.log(user,req.user);
@@ -70,6 +78,10 @@ app.use(
           })
     },
     function(req,res,next){
+        if(req.method=='OPTIONS'){
+            //next();
+            res.json(config.get('ok'));
+        }
       details(req,res)
           .then(function(user){
               if(user) {

@@ -27,7 +27,7 @@
   },
   "mockgoose":true,
   "token":{
-    "expiry":25
+    "expiry":300
   },
   "crypto": {
     "algorithm": "aes-256-ctr",

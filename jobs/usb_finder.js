@@ -27,12 +27,10 @@ var job = new CronJob({
             if(!err){
                 for (var i = 0; i < files.length; i++) {
                     if (!err) {
-                        log.info(_basePath + files[i])
                         fs.readdir(_basePath + files[i], function (err, files) {
                             if(!err) {
                                 for (var i = 0; i < files.length; i++) {
                                     if (files[i] == "movies") {
-                                        console.log("getting movies");
                                         getmovies(this.path + "/movies");
                                     }
                                 }
@@ -45,7 +43,7 @@ var job = new CronJob({
                     }
                 }
             }else{
-                log.warn(err);
+                //log.warn(err);
             }
         });
         function getmovies(path){
@@ -59,7 +57,7 @@ var job = new CronJob({
                                 content_type: "movie",
                                 source: "usb"
                             }
-                            log.info(movie);
+                            //log.info(movie);
                             events.emitter.emit("movie found", movie);
                         }
                     }

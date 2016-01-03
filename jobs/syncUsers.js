@@ -26,17 +26,16 @@ var job = new CronJob({
         try{
             fs.readFile(synctimefile, "utf8", function(err, data) {
                 if(!err){
-                    console.log(data);
                     syncTime=new Date(data);
                 }
-                log.info(syncTime);
+                //log.info(syncTime);
             if(!syncTime){
                 syncTime=new Date(0);
             }
             var queryTime = moment(syncTime.getTime()).subtract(15, 'minutes');
-            log.info(queryTime.toString());
+            //log.info(queryTime.toString());
             userTable.find({is_verified:true,created_time:{$gte:new Date(queryTime.toString())}},function(err,users){
-                //log.info(err,users);
+                log.info(err,users);
                 if(users.length>0) {
                     var data = {
                         bus_identifier: config.get("bus_id"),
@@ -53,7 +52,7 @@ var job = new CronJob({
                             if(!err){
                                 if (body.result == "ok") {
                                     updateSyncTime();
-                                    log.info("feedbacks synced");
+                                    //log.info("feedbacks synced");
                                 }
                             }
                         })
@@ -75,7 +74,6 @@ function updateSyncTime(){
         if(err) {
             return console.log(err);
         }
-        console.log("The file was saved!");
     });
 }
 job.start();
