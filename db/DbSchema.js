@@ -128,6 +128,12 @@ var catalogSchema=new LinvoDB("catalog",{
 var feedbackSchema=new LinvoDB("feedback",{
     user_id:String,
     phonenumber:String,
+    staff_rating:Number,
+    snacks_rating:Number,
+    cleanliness_rating:Number,
+    app_rating:Number,
+    tracking_rating:Number,
+    punctuality_rating:Number,
     rating:Number,
     feedback:String,
     created_time:{type:Date,default:Date.now},
