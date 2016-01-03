@@ -21,7 +21,7 @@ var syncTime;
 userTable=db.getuserdef;
 //var redis = require("redis"),//    client = redis.createClient();
 var job = new CronJob({
-    cronTime: '* */5 * * * *',
+    cronTime: '0 */5 * * * *',
     onTick: function() {
         try{
             fs.readFile(synctimefile, "utf8", function(err, data) {
