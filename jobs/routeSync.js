@@ -19,7 +19,7 @@ var request=require('request');
 var buslocation=db.getbuslocationdef;
 var routeTable=db.getroutedef;
 var job = new CronJob({
-    cronTime: '20 */5 * * * *',
+    cronTime: '30 * * * * *',
     onTick: function() {
         log.info("making routesync request");
         try {

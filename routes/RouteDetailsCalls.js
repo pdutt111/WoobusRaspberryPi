@@ -57,5 +57,16 @@ function(req,res){
     response.boarding_points=boarding_points;
     res.json(response);
 });
+router.post('/location',
+    function(req,res,next) {
+        routeLogic.postLocation(req,res)
+            .then(function(){
+                log.info("running");
+                res.json(config.get('ok'));
+            })
+            .catch(function(err){
+                res.status(err.status).json(err.message);
+            }).done();
+    });
 
 module.exports = router;
