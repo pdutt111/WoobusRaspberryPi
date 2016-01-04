@@ -29,6 +29,7 @@ var route={
     postLocation:function(req,res){
         var def= q.defer();
         if(req.body.accuracy<100){
+            log.info(req.body);
             events.emitter.emit('location',req.body);
         }
         def.resolve();
