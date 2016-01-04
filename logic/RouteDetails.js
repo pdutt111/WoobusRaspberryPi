@@ -7,6 +7,7 @@ var jwt = require('jwt-simple');
 var db=require('../db/DbSchema');
 var events = require('../events');
 var log = require('tracer').colorConsole(config.get('log'));
+var calcDist=require('../jobs/calculateDistance');
 
 var userTable=db.getuserdef;
 var routeTable=db.getroutedef;
@@ -23,6 +24,14 @@ var route={
                 def.reject({status: 500, message: config.get('error.dberror')});
             }
         });
+        return def.promise;
+    },
+    postLocation:function(req,res){
+        var def= q.defer();
+        if(req.body.accuracy<100){
+            events.emitter.emit('location',req.body);
+        }
+        def.resolve();
         return def.promise;
     }
 }

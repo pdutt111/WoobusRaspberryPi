@@ -23,6 +23,7 @@ var getJourneyDetails=function(){
         var timeElapsed=(new Date()-data.calc_time);
         log.info(new Date(),data.calc_time);
         var distanceCovered=speed*timeElapsed/(1000*60*60);
+        log.info(Number(((data.distanceValue-distanceCovered)/1000)));
         response.current_distance=Number(((data.distanceValue-distanceCovered)/1000).toFixed(0));
         response.current_time_taken=(data.durationValue*1000-timeElapsed);
     }
