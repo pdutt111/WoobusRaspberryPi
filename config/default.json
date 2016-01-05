@@ -16,6 +16,7 @@
     "database":"woobusraspberrypi",
     "debug": false
   },
+  "googleapi":"AIzaSyCq0CoGEtFg3mEcKriuyE2aDjdFScTPgWQ",
   "serverUrl":"http://sync.cachefi.com",
   "devUrl":"http://localhost:1340",
   "state":{
