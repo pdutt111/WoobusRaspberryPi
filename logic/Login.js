@@ -104,6 +104,8 @@ var users={
                                 var tokendata={
                                     _id:user._id,
                                     phonenumber:user.phonenumber,
+                                    name:user.name,
+                                    email:user.email,
                                     is_verified:true,
                                     is_operator:user.is_operator,
                                     is_admin:user.is_admin
