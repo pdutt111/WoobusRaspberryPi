@@ -5,7 +5,7 @@
   },
   "url":"development.cachefi.com",
   "sync_url":"http://sync.cachefi.com",
-  "bus_id":"1",
+  "bus_id":"2",
   "dblocation":"/db/dbfiles",
   "AWS_S3": {},
   "mailer_options": {},
