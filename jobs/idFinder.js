@@ -16,8 +16,14 @@ var events = require('../events');
 var log = require('tracer').colorConsole(config.get('log'));
 var request=require('request');
 var _basePath="/boot/";
-var data=fs.readFileSync(_basePath+"woobus_bus_id.txt",'utf8')
+try{
+    var data=fs.readFileSync(_basePath+"woobus_bus_id.txt",'utf8')
     log.info("the woobus id is",data);
     //config.util.setPath(config,"bus_id",data);
     config["bus_id"]=data;
     log.info(config.get('bus_id'));
+}catch(e){
+    fs.writeFile(_basePath+"woobus_bus_id.txt",config.get('bus_id'),function(err,info){
+        log.info("created a woobus_bus_id file");
+    })
+}
