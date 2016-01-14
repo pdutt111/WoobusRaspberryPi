@@ -20,7 +20,7 @@ try{
     var data=fs.readFileSync(_basePath+"woobus_bus_id.txt",'utf8')
     log.info("the woobus id is",data);
     //config.util.setPath(config,"bus_id",data);
-    config["bus_id"]=data;
+    config["bus_id"]=data.trim();
     log.info(config.get('bus_id'));
 }catch(e){
     fs.writeFile(_basePath+"woobus_bus_id.txt",config.get('bus_id'),function(err,info){
