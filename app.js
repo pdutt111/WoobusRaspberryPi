@@ -1,3 +1,4 @@
+require('./jobs/idFinder.js');
 require('./jobs/status.js');
 require('./jobs/gpsd.js');
 require('./jobs/calculateDistance.js');
