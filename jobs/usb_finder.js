@@ -15,6 +15,7 @@ var gcm=require('../notificationSenders/gcmsender');
 var CronJob = require('cron').CronJob;
 var request=require('request');
 var _basePath="/media/";
+var _localPath="/movies/";
 //var redis = require("redis"),
 //    client = redis.createClient();
 var buslocation=db.getbuslocationdef;
@@ -23,6 +24,7 @@ var job = new CronJob({
     cronTime: '0 */5 * * * *',
     onTick: function() {
         events.emitter.emit("clear movies");
+        getmovies(_localPath);
         fs.readdir(_basePath,function(err,files){
             if(!err){
                 for (var i = 0; i < files.length; i++) {
