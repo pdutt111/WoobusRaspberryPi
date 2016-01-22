@@ -20,6 +20,7 @@ var _localPath="/movies/";
 //    client = redis.createClient();
 var buslocation=db.getbuslocationdef;
 var routeTable=db.getroutedef;
+getmovies(_localPath);
 var job = new CronJob({
     cronTime: '0 */5 * * * *',
     onTick: function() {
@@ -48,29 +49,29 @@ var job = new CronJob({
                 //log.warn(err);
             }
         });
-        function getmovies(path){
-            fs.readdir(path,function(err,files){
-                if(!err) {
-                    for (var i = 0; i < files.length; i++) {
-                        if (files[i].split(".")[files[i].split(".").length-1] == "mp4") {
-                            var movie={
-                                name: files[i],
-                                path: path + "/" + files[i],
-                                content_type: "movie",
-                                source: "usb"
-                            }
-                            //log.info(movie);
-                            events.emitter.emit("movie found", movie);
-                        }
-                    }
-                }else{
-                    log.warn(err);
-                }
-            })
-        }
 
     },
     start: false,
     timeZone: 'Asia/Kolkata'
 });
+function getmovies(path){
+    fs.readdir(path,function(err,files){
+        if(!err) {
+            for (var i = 0; i < files.length; i++) {
+                if (files[i].split(".")[files[i].split(".").length-1] == "mp4") {
+                    var movie={
+                        name: files[i],
+                        path: path + "/" + files[i],
+                        content_type: "movie",
+                        source: "usb"
+                    }
+                    //log.info(movie);
+                    events.emitter.emit("movie found", movie);
+                }
+            }
+        }else{
+            log.warn(err);
+        }
+    })
+}
 job.start();
