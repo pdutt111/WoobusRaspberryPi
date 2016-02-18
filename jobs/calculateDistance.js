@@ -15,6 +15,7 @@ distance.apiKey = config.get('googleapi');
 var location_data={lat:0,lon:0,speed:0,track:0};
 events.emitter.on('location',function(data){
     location_data=data;
+    log.info("recieved location data"+location);
 });
 //var distanceInterval;
 //if(!distanceInterval){
